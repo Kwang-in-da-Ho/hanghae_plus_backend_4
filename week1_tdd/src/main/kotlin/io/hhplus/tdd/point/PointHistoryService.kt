@@ -13,7 +13,11 @@ class PointHistoryService @Autowired constructor(
     }
 
     fun insertPointChargeHistory(id: Long, amount: Long): PointHistory {
-        return pointHistoryTable.insert(id, amount, TransactionType.CHARGE ,System.currentTimeMillis())
+        return pointHistoryTable.insert(id, amount, TransactionType.CHARGE, System.currentTimeMillis())
+    }
+
+    fun insertPointUseHistory(id: Long, amount: Long): PointHistory {
+        return pointHistoryTable.insert(id, amount, TransactionType.USE, System.currentTimeMillis())
     }
 
 }

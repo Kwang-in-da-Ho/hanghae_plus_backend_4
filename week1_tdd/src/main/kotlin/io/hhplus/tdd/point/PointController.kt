@@ -51,6 +51,6 @@ class PointController @Autowired constructor(
         @PathVariable id: Long,
         @RequestBody amount: Long,
     ): UserPoint {
-        return UserPoint(0, 0, 0)
+        return pointService.useUserPoint(id, amount)
     }
 }

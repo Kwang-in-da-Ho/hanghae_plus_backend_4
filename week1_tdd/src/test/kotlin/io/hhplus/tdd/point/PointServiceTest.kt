@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point
 
 import io.hhplus.tdd.TddApplication
+import io.hhplus.tdd.exceptions.InsufficientPointException
 import io.hhplus.tdd.exceptions.InvalidPointException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -12,15 +13,19 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(classes = [TddApplication::class])
 class PointServiceTest @Autowired constructor(
     private val pointService: PointService,
-    private val pointHistoryService: PointHistoryService,
 ){
 
     private val testUser = 0L
 
+    /*
+     * 궁금한 점
+     * 1)
+     */
+
     // charge
     @Test
     @DisplayName("양수인 포인트만 충전 가능하다")
-    fun `points given to be charged should be a positive number`() {
+    fun `charge amount should be a positive number`() {
         //negative number
         assertThrows<InvalidPointException> {
             pointService.chargeUserPoint(testUser, -123)
@@ -35,43 +40,53 @@ class PointServiceTest @Autowired constructor(
     @Test
     @DisplayName("사용자가 포인트를 충전하면 정확히 충전한 만큼 포인트가 증가한다")
     fun `when a user charges points, the user's points should increase by the charged amount`() {
-        // charge once
-        val chargeAmount = 1000L
-
-        val beforeChargePointAmount = pointService.retrieveUserPoint(id = testUser).point
-        val afterChargePointAmount = pointService.chargeUserPoint(testUser, chargeAmount).point
-
-        assertEquals(beforeChargePointAmount + chargeAmount, afterChargePointAmount)
-
-        // charge multiple times
         val chargePointList = listOf(1000L, 2300L, 500L, 600L)
 
-        val beforeMultipleChargeAmount = pointService.retrieveUserPoint(id = testUser).point
         for(charge in chargePointList){
-            pointService.chargeUserPoint(testUser, charge)
+            val beforeChargeAmount = pointService.retrieveUserPoint(id = testUser).point
+            val afterChargeAmount = pointService.chargeUserPoint(testUser, charge).point
+            assertEquals(beforeChargeAmount +  charge, afterChargeAmount)
         }
-        val afterMultipleChargeAmount = pointService.retrieveUserPoint(id = testUser).point
+    }
 
-        assertEquals(beforeMultipleChargeAmount + chargePointList.sum(), afterMultipleChargeAmount)
+    //use
+    @Test
+    @DisplayName("양수인 포인트만 충전 가능하다")
+    fun `use amount should be a positive number`() {
+        //negative number
+        assertThrows<InvalidPointException> {
+            pointService.useUserPoint(testUser, -1235123)
+        }
+
+        //zero
+        assertThrows<InvalidPointException> {
+            pointService.useUserPoint(testUser, 0)
+        }
     }
 
     @Test
-    @DisplayName("사용자가 포인트를 충전하면 이력 데이터가 등록된다")
-    fun `when a user charges points, history data should be registered`() {
-        val chargePointList = listOf(1000L, 9999L, 300L)
+    @DisplayName("사용자는 자신이 보유한 포인트를 초과하는 양의 포인트를 사용할 수 없다")
+    fun `a user cannot use more points than the amount the user possesses`() {
+        val currentAmount = pointService.retrieveUserPoint(testUser).point
+        val invalidUseAmount = currentAmount + 1L
 
-        for (charge in chargePointList){
-            pointService.chargeUserPoint(testUser, charge)
-        }
-
-        val userChargeHistoryList = pointHistoryService.retrieveUserPointHistoryList(testUser)
-
-        assertEquals(userChargeHistoryList.size, chargePointList.size)
-
-        for(i in userChargeHistoryList.indices){
-            assertEquals(userChargeHistoryList[i].type, TransactionType.CHARGE)
-            assertEquals(chargePointList[i], userChargeHistoryList[i].amount)
+        assertThrows<InsufficientPointException>{
+            pointService.useUserPoint(testUser, invalidUseAmount)
         }
     }
 
+    @Test
+    @DisplayName("사용자가 포인트를 사용하면 정확히 사용한 만큼 포인트가 차감된다")
+    fun `when a user uses points, the user's points should decrease by the used amount`() {
+        val useList = listOf(1000L, 234L, 423L, 645L)
+
+        //initial charge
+        pointService.chargeUserPoint(testUser, 5000L).point
+
+        for(use in useList){
+            val beforeUseAmount = pointService.retrieveUserPoint(testUser).point
+            val afterUseAmount = pointService.useUserPoint(testUser, use).point
+            assertEquals(beforeUseAmount - use, afterUseAmount)
+        }
+    }
 }
