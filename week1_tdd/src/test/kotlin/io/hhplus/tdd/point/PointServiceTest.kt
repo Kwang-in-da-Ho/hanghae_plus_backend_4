@@ -2,7 +2,7 @@ package io.hhplus.tdd.point
 
 import io.hhplus.tdd.TddApplication
 import io.hhplus.tdd.exceptions.InvalidPointException
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -12,11 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(classes = [TddApplication::class])
 class PointServiceTest @Autowired constructor(
     private val pointService: PointService,
-    private val pointHistoryService: PointHistoryService
+    private val pointHistoryService: PointHistoryService,
 ){
 
     private val testUser = 0L
 
+    // charge
     @Test
     @DisplayName("양수인 포인트만 충전 가능하다")
     fun `points given to be charged should be a positive number`() {
@@ -34,12 +35,24 @@ class PointServiceTest @Autowired constructor(
     @Test
     @DisplayName("사용자가 포인트를 충전하면 정확히 충전한 만큼 포인트가 증가한다")
     fun `when a user charges points, the user's points should increase by the charged amount`() {
+        // charge once
         val chargeAmount = 1000L
 
         val beforeChargePointAmount = pointService.retrieveUserPoint(id = testUser).point
         val afterChargePointAmount = pointService.chargeUserPoint(testUser, chargeAmount).point
 
         assertEquals(beforeChargePointAmount + chargeAmount, afterChargePointAmount)
+
+        // charge multiple times
+        val chargePointList = listOf(1000L, 2300L, 500L, 600L)
+
+        val beforeMultipleChargeAmount = pointService.retrieveUserPoint(id = testUser).point
+        for(charge in chargePointList){
+            pointService.chargeUserPoint(testUser, charge)
+        }
+        val afterMultipleChargeAmount = pointService.retrieveUserPoint(id = testUser).point
+
+        assertEquals(beforeMultipleChargeAmount + chargePointList.sum(), afterMultipleChargeAmount)
     }
 
     @Test
@@ -60,4 +73,5 @@ class PointServiceTest @Autowired constructor(
             assertEquals(chargePointList[i], userChargeHistoryList[i].amount)
         }
     }
+
 }

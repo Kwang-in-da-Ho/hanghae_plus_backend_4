@@ -18,12 +18,11 @@ class PointService @Autowired constructor(
 
         pointHistoryService.insertPointChargeHistory(id, amount)
 
-        return userPointTable.insertOrUpdate(id, amount)
+        return userPointTable.insertOrUpdate(id, amount + retrieveUserPoint(id).point)
     }
 
     fun retrieveUserPoint(id: Long): UserPoint {
         return userPointTable.selectById(id)
     }
-
 
 }
