@@ -60,4 +60,48 @@ class PointHistoryServiceTest @Autowired constructor(
             assertEquals(usePointList[i-1], userUseHistoryList[i].amount)
         }
     }
+
+    @Test
+    @DisplayName("포인트 이력을 조회하면 각 충전 또는 사용 내역이 발생한 순서대로 표시된다")
+    fun `history data should show each charge or use event in order it happened`() {
+        val testUser = 2L
+        val typeList = listOf(
+            TransactionType.CHARGE,
+            TransactionType.CHARGE,
+            TransactionType.USE,
+            TransactionType.USE,
+            TransactionType.USE,
+            TransactionType.CHARGE)
+        val amountList = listOf(
+            1000L,
+            123515L,
+            34412L,
+            42345L,
+            2222L,
+            12405L,
+        )
+
+        for(i in typeList.indices){
+            when(typeList[i]){
+                TransactionType.CHARGE -> pointService.chargeUserPoint(testUser, amountList[i])
+                TransactionType.USE -> pointService.useUserPoint(testUser, amountList[i])
+            }
+        }
+
+        val userPointHistoryList = pointHistoryService.retrieveUserPointHistoryList(testUser)
+
+        assertEquals(typeList.size, userPointHistoryList.size)
+
+        for(i in userPointHistoryList.indices){
+            assertEquals(typeList[i], userPointHistoryList[i].type)
+            assertEquals(amountList[i], userPointHistoryList[i].amount)
+        }
+    }
+
+    @Test
+    @DisplayName("포인트 충전이나 사용을 한 적이 없는 사용자에 대해 empty list가 반환된다")
+    fun `for users who have never charged or used points, an empty list should be returned`() {
+        val testUser = 1234L
+        assert(pointHistoryService.retrieveUserPointHistoryList(testUser).isEmpty())
+    }
 }
