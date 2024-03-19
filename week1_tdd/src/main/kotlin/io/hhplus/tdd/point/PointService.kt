@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class PointService @Autowired constructor(
-    val userPointTable: UserPointTable
+    val userPointTable: UserPointTable,
+    val pointHistoryService: PointHistoryService
 ) {
     fun chargeUserPoint(id: Long, amount: Long): UserPoint {
 
@@ -15,7 +16,13 @@ class PointService @Autowired constructor(
             throw InvalidPointException("충전할 포인트는 양수만 입력 가능합니다.")
         }
 
+        pointHistoryService.insertPointChargeHistory(id, amount)
+
         return userPointTable.insertOrUpdate(id, amount)
+    }
+
+    fun retrieveUserPoint(id: Long): UserPoint {
+        return userPointTable.selectById(id)
     }
 
 
