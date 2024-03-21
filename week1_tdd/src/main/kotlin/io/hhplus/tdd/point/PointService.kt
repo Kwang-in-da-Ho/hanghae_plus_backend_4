@@ -14,6 +14,12 @@ class PointService @Autowired constructor(
 
     @Synchronized
     fun chargeUserPoint(id: Long, amount: Long): UserPoint {
+
+        /*
+            event queue에 등록
+               => event processor에서 queue에 있는
+         */
+
         if(amount <= 0){
             throw InvalidPointException("충전할 포인트는 양수만 입력 가능합니다.")
         }
