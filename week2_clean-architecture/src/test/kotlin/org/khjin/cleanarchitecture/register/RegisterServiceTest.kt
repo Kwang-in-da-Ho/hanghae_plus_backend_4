@@ -32,7 +32,7 @@ class RegisterServiceTest {
             , 30)
         private val notOpenLecture = LectureEntity(
             1L
-            , "test Lecture"
+            , "test Lecture - Registration Not Open"
             , LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.NOON) //tomorrow noon
             , 30 )
 
@@ -72,7 +72,7 @@ class RegisterServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 강의id로 수강신청 시도 시 InvalidLectureException 발생")
-    fun `when a user attempts to register with an invalid lecture id, throw InvalidLectureException`() {
+    fun `when a user attempts to register with an invalid lecture id, InvalidLectureException should be thrown`() {
         //given
         sut.register(testUser.userId, testLecture.lectureId)
         val invalidLectureId = 9999L
@@ -84,7 +84,7 @@ class RegisterServiceTest {
 
     @Test
     @DisplayName("이미 등록한 사용자가 또 다시 등록을 시도한다면 DuplicateRegistrationException 발생")
-    fun `when a user who already registered for a lecture attempts to register again, throw DuplicateRegsitrationException`() {
+    fun `when a user who already registered for a lecture attempts to register again, DuplicateRegistrationException should be thrown`() {
         //given
         sut.register(testUser.userId, testLecture.lectureId)
 
@@ -95,7 +95,7 @@ class RegisterServiceTest {
 
     @Test
     @DisplayName("아직 수강신청이 열리지 않은 특강에 대해 수강신청을 하면 LectureRegistrationNotOpenException 발생")
-    fun `when a user attempts to register for a lecture that has not opened, LectureRegistrationNotOpenException is Thrown`() {
+    fun `when a user attempts to register for a lecture that has not opened, LectureRegistrationNotOpenException should be thrown`() {
         assertThrows<LectureRegistrationNotOpenException> {
             sut.register(testUser.userId, notOpenLecture.lectureId)
         }
@@ -103,7 +103,7 @@ class RegisterServiceTest {
 
     @Test
     @DisplayName("수강 인원이 다 찬 강의에 수강신청할 경우 StudentsFullException 발생")
-    fun `when a user attempts to register for a full lecture, StudentsFullException is thrown`() {
+    fun `when a user attempts to register for a full lecture, StudentsFullException should be thrown`() {
         //given
         val capacity = testLecture.studentCapacity
         //insert user and register data until capcity is filled
@@ -137,10 +137,10 @@ class RegisterServiceTest {
             tempTable.remove(generateId(user.userId, lecture.lectureId))
         }
 
-        override fun findByLectureId(lectureId: Long): List<RegisterEntity> {
+        override fun findByLecture(lecture: LectureEntity): List<RegisterEntity> {
             val result = mutableListOf<RegisterEntity>()
             tempTable.forEach { key, reg ->
-                if( key.split(keyDelim)[1].toLong() == lectureId ) result.add(reg)
+                if( key.split(keyDelim)[1].toLong() == lecture.lectureId ) result.add(reg)
             }
             return result
         }

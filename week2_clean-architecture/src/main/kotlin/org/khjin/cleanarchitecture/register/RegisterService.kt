@@ -21,7 +21,7 @@ class RegisterService(
             throw LectureRegistrationNotOpenException()
         }
 
-        val registerList = registerRepository.findByLectureId(lectureId)
+        val registerList = registerRepository.findByLecture(lecture)
         if( lecture.studentCapacity <=  registerList.size){
             throw StudentsFullException()
         }

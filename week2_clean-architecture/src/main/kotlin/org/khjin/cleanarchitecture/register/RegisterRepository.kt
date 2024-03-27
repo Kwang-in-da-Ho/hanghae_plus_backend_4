@@ -9,6 +9,6 @@ interface RegisterRepository {
     fun save(user: UserEntity, lecture: LectureEntity): RegisterEntity
     fun findById(user: UserEntity, lecture: LectureEntity): RegisterEntity?
     fun deleteById(user: UserEntity, lecture: LectureEntity)
-    fun findByLectureId(lectureId: Long): List<RegisterEntity>
+    fun findByLecture(lecture: LectureEntity): List<RegisterEntity>
 
 }
