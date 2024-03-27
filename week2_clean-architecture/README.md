@@ -52,9 +52,33 @@
 
 ---
 
-## 과제 분석
-### 1. Concurrency Issue
-* 
+## 과제 시작 전..
+### 1. ERD
+![ERD](docs/ERD_1.png)
+* USER : 사용자(수강신청할 사람들)
+* LECTURE : 강의 정보 관리
+  * `REGISTER_OPEN_DATETIME` : 수강신청 오픈 일시 - 이 일시 이후에만 수강신청이 가능함
+  * `STUDENT_CAPACITY` : 수강 신청 가능 인원
+* USER_LECTURE_REGISTER : 수강신청 정보를 관리하는 테이블
+### 2. Architecture
+* 허재 코치님의 Clean Architecture + Layered Architecture
+  * 각 Layer 간의 결함도를 최소한으로 하여 특정 Layer의 변경사항의 전파가 최소한으로 이뤄지도록 함.
+  * BUT 작성해야 할 클래스가 많아 익숙하지 않으면 생산성이 조금 떨어질 수 있음
+* 이석범 코치님 (2주차 멘토)
+  * 허재 코치님보다 Layer의 수가 적음.
+  * 생산성/유지보수성에 조금 더 초점. (그렇다고 Layer를 너무 적게 사용하는 것은 아님)
+* Me
+  * 우선 허재 코치님의 스타일대로 최대한 Layer를 나누어 볼 것.
+  * 그렇게 최소한의 단위로 나눠진 Layer를 어떤 식으로 합쳐 나가면 적정 수준의 생산성과 이상적인 결합도를 달성할 수 있을지 고민해볼 것 
+### 3. TDD
+* 모든 클래스에 대한 단위 테스트 작성
+* 단위 테스트로 작성할 수 없는 기능들에 대해서는 통합 테스트를 작성할 것.
+### 4. Concurrency Issue
+* 공부가 부족함 - 다음 주제들에 대해 공부해볼 것
+  * Optimistic Lock, Pessimistic Lock
+  * Transaction의 Isolation level
+
+---
 
 
 
