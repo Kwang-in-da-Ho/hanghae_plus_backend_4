@@ -80,5 +80,8 @@
 
 ---
 
-
-
+## What I Learned
+### JPA
+1. `data class`에 `@Entity` 설정하지 말 것
+  * `data class`에서 기본적으로 override하는 메소드들로 인해 JPA에서 제공하는 복잡한 기능들에 성능 저하가 발생할 수 있음
+  * reference : https://www.baeldung.com/kotlin/jpa
