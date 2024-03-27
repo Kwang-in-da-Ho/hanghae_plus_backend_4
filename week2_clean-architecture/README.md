@@ -54,7 +54,7 @@
 
 ## 과제 시작 전..
 ### 1. ERD
-![ERD](docs/ERD_1.png)
+![ERD](docs/ERD_2.png)
 * USER : 사용자(수강신청할 사람들)
 * LECTURE : 강의 정보 관리
   * `REGISTER_OPEN_DATETIME` : 수강신청 오픈 일시 - 이 일시 이후에만 수강신청이 가능함
