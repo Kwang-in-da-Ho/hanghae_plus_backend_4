@@ -2,6 +2,10 @@ package org.khjin.cleanarchitecture.register
 
 import org.khjin.cleanarchitecture.exception.*
 import org.khjin.cleanarchitecture.lecture.LectureRepository
+import org.khjin.cleanarchitecture.register.dto.CheckRegistrationRequest
+import org.khjin.cleanarchitecture.register.dto.CheckRegistrationResponse
+import org.khjin.cleanarchitecture.register.dto.RegisterRequest
+import org.khjin.cleanarchitecture.register.dto.RegistrationStatus
 import org.khjin.cleanarchitecture.user.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -12,10 +16,10 @@ class RegisterService(
     private val userRepository: UserRepository,
     private val lectureRepository: LectureRepository,
 ) {
-    fun register(userId: Long, lectureId: Long) {
+    fun register(registerRequest: RegisterRequest) {
 
-        val user = userRepository.findById(userId) ?: throw InvalidUserException()
-        val lecture = lectureRepository.findById(lectureId) ?: throw InvalidLectureException()
+        val user = userRepository.findById(registerRequest.userId) ?: throw InvalidUserException()
+        val lecture = lectureRepository.findById(registerRequest.lectureId) ?: throw InvalidLectureException()
 
         if( lecture.registerOpenDatetime.isAfter(LocalDateTime.now()) ){
             throw LectureRegistrationNotOpenException()
@@ -32,6 +36,21 @@ class RegisterService(
         }
 
         registerRepository.save(user, lecture)
+    }
+
+    fun checkRegistration(checkRegistrationRequest: CheckRegistrationRequest): CheckRegistrationResponse {
+
+        val user = userRepository.findById(checkRegistrationRequest.userId) ?: throw InvalidUserException()
+        val lecture = lectureRepository.findById(checkRegistrationRequest.lectureId) ?: throw InvalidLectureException()
+
+        val result = CheckRegistrationResponse(
+            if( registerRepository.findById(user, lecture) != null )
+                RegistrationStatus.SUCCESS
+            else
+                RegistrationStatus.FAIL
+        )
+
+        return result
     }
 
 }

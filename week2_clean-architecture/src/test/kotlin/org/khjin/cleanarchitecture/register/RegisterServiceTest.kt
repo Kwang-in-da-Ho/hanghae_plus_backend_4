@@ -1,5 +1,6 @@
 package org.khjin.cleanarchitecture.register
 
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -9,6 +10,9 @@ import org.junit.jupiter.api.assertThrows
 import org.khjin.cleanarchitecture.exception.*
 import org.khjin.cleanarchitecture.lecture.LectureEntity
 import org.khjin.cleanarchitecture.lecture.LectureRepository
+import org.khjin.cleanarchitecture.register.dto.CheckRegistrationRequest
+import org.khjin.cleanarchitecture.register.dto.RegisterRequest
+import org.khjin.cleanarchitecture.register.dto.RegistrationStatus
 import org.khjin.cleanarchitecture.user.UserEntity
 import org.khjin.cleanarchitecture.user.UserRepository
 import java.time.LocalDate
@@ -62,11 +66,11 @@ class RegisterServiceTest {
     @DisplayName("존재하지 않는 사용자id로 수강신청 시도 시 InvalidUserException 발생")
     fun `when a user attempts to register with an invalid user id, throw InvalidUserException`() {
         //given
-        sut.register(testUser.userId, testLecture.lectureId)
+        sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
         val invalidUserId = 9999L
 
         assertThrows<InvalidUserException> {
-            sut.register(invalidUserId, testLecture.lectureId)
+            sut.register(RegisterRequest(invalidUserId, testLecture.lectureId))
         }
     }
 
@@ -74,11 +78,11 @@ class RegisterServiceTest {
     @DisplayName("존재하지 않는 강의id로 수강신청 시도 시 InvalidLectureException 발생")
     fun `when a user attempts to register with an invalid lecture id, InvalidLectureException should be thrown`() {
         //given
-        sut.register(testUser.userId, testLecture.lectureId)
+        sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
         val invalidLectureId = 9999L
 
         assertThrows<InvalidLectureException> {
-            sut.register(testUser.userId, invalidLectureId)
+            sut.register(RegisterRequest(testUser.userId, invalidLectureId))
         }
     }
 
@@ -86,10 +90,10 @@ class RegisterServiceTest {
     @DisplayName("이미 등록한 사용자가 또 다시 등록을 시도한다면 DuplicateRegistrationException 발생")
     fun `when a user who already registered for a lecture attempts to register again, DuplicateRegistrationException should be thrown`() {
         //given
-        sut.register(testUser.userId, testLecture.lectureId)
+        sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
 
         assertThrows<DuplicateRegistrationException> {
-            sut.register(testUser.userId, testLecture.lectureId)
+            sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
         }
     }
 
@@ -97,7 +101,7 @@ class RegisterServiceTest {
     @DisplayName("아직 수강신청이 열리지 않은 특강에 대해 수강신청을 하면 LectureRegistrationNotOpenException 발생")
     fun `when a user attempts to register for a lecture that has not opened, LectureRegistrationNotOpenException should be thrown`() {
         assertThrows<LectureRegistrationNotOpenException> {
-            sut.register(testUser.userId, notOpenLecture.lectureId)
+            sut.register(RegisterRequest(testUser.userId, notOpenLecture.lectureId))
         }
     }
 
@@ -106,15 +110,54 @@ class RegisterServiceTest {
     fun `when a user attempts to register for a full lecture, StudentsFullException should be thrown`() {
         //given
         val capacity = testLecture.studentCapacity
-        //insert user and register data until capcity is filled
+        //insert user and register data until capacity is filled
         (10..<10+capacity).forEach { i ->
             stubUserRepo.save(UserEntity(i.toLong(), "test user $i"))
-            sut.register(i.toLong(), testLecture.lectureId)
+            sut.register(RegisterRequest(i.toLong(), testLecture.lectureId))
         }
 
         assertThrows<StudentsFullException> {
-            sut.register(testUser.userId, testLecture.lectureId)
+            sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
         }
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자id로 수강신청내역 조회 시 InvalidUserException 발생")
+    fun `when a user queries for a registration data with invalid user id, InvalidUserException should be thrown`() {
+        //given
+        val invalidUserId = 9999L
+
+        assertThrows<InvalidUserException> {
+            sut.checkRegistration(CheckRegistrationRequest(invalidUserId, testLecture.lectureId))
+        }
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자id로 수강신청내역 조회 시 InvalidUserException 발생")
+    fun `when a user queries for a registration data with invalid lecture id, InvalidLectureException should be thrown`() {
+        //given
+        val invalidLectureId = 9999L
+
+        assertThrows<InvalidLectureException> {
+            sut.checkRegistration(CheckRegistrationRequest(testUser.userId, invalidLectureId))
+        }
+    }
+
+    @Test
+    @DisplayName("신청 완료 여부를 조회하였을 때 등록자 명단에 있다면 RegistrationStatus.SUCCESS가 반환된다")
+    fun `when a is registered for a lecture, RegistrationStatus-SUCCESS should be returned`() {
+        //given
+        sut.register(RegisterRequest(testUser.userId, testLecture.lectureId))
+
+        val result = sut.checkRegistration(CheckRegistrationRequest(testUser.userId, testLecture.lectureId))
+        assertEquals(result.registrationStatus, RegistrationStatus.SUCCESS)
+    }
+
+    @Test
+    @DisplayName("신청 완료 여부를 조회하였을 때 등록자 명단에 없다면 RegistrationStatus.FAIL이 반환된다")
+    fun `when a user is not registered for a lecture, RegistrationStatus-FAIL should be returned`() {
+        val result = sut.checkRegistration(CheckRegistrationRequest(testUser.userId, testLecture.lectureId))
+        assertEquals(result.registrationStatus, RegistrationStatus.FAIL)
     }
 
     //Repository stubs
