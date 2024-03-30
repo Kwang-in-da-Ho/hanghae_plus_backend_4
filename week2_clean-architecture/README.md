@@ -85,3 +85,7 @@
 1. `data class`에 `@Entity` 설정하지 말 것
   * `data class`에서 기본적으로 override하는 메소드들로 인해 JPA에서 제공하는 복잡한 기능들에 성능 저하가 발생할 수 있음
   * reference : https://www.baeldung.com/kotlin/jpa
+2. Composite Key vs Artificial Key
+  * Composite Key는 지양할 것.
+  * 모든 테이블은 Long, Auto-Increment 형태의 단일 키를 갖는 것이 좋다
+  * Composite Key 사용 시 쿼리가 지나치게 복잡해짐

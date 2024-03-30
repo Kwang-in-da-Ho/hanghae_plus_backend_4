@@ -8,13 +8,15 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.khjin.cleanarchitecture.exception.*
-import org.khjin.cleanarchitecture.lecture.LectureEntity
-import org.khjin.cleanarchitecture.lecture.LectureRepository
+import org.khjin.cleanarchitecture.lecture.entity.Lecture
+import org.khjin.cleanarchitecture.lecture.repository.LectureRepository
 import org.khjin.cleanarchitecture.register.dto.CheckRegistrationRequest
 import org.khjin.cleanarchitecture.register.dto.RegisterRequest
 import org.khjin.cleanarchitecture.register.dto.RegistrationStatus
-import org.khjin.cleanarchitecture.user.UserEntity
-import org.khjin.cleanarchitecture.user.UserRepository
+import org.khjin.cleanarchitecture.register.entity.Register
+import org.khjin.cleanarchitecture.register.repository.RegisterRepository
+import org.khjin.cleanarchitecture.user.entity.User
+import org.khjin.cleanarchitecture.user.repository.UserRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -28,13 +30,13 @@ class RegisterServiceTest {
         private val stubLectureRepo = TestLectureRepository()
         private val sut: RegisterService = RegisterService(stubRegisterRepo, stubUserRepo, stubLectureRepo)
 
-        private val testUser = UserEntity(0L, "testUser")
-        private val testLecture = LectureEntity(
+        private val testUser = User(0L, "testUser")
+        private val testLecture = Lecture(
             0L
             , "test Lecture"
             , LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.NOON) //yesterday noon
             , 30)
-        private val notOpenLecture = LectureEntity(
+        private val notOpenLecture = Lecture(
             1L
             , "test Lecture - Registration Not Open"
             , LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.NOON) //tomorrow noon
@@ -112,7 +114,7 @@ class RegisterServiceTest {
         val capacity = testLecture.studentCapacity
         //insert user and register data until capacity is filled
         (10..<10+capacity).forEach { i ->
-            stubUserRepo.save(UserEntity(i.toLong(), "test user $i"))
+            stubUserRepo.save(User(i.toLong(), "test user $i"))
             sut.register(RegisterRequest(i.toLong(), testLecture.lectureId))
         }
 
@@ -161,27 +163,27 @@ class RegisterServiceTest {
     }
 
     //Repository stubs
-    private class TestRegisterReopository: RegisterRepository{
+    private class TestRegisterReopository: RegisterRepository {
 
-        private val tempTable = mutableMapOf<String, RegisterEntity>()
+        private val tempTable = mutableMapOf<String, Register>()
         private val keyDelim="-"
 
-        override fun save(user: UserEntity, lecture: LectureEntity): RegisterEntity {
-            val register = RegisterEntity(user, lecture, LocalDateTime.now())
+        override fun save(user: User, lecture: Lecture): Register {
+            val register = Register(null, user, lecture, LocalDateTime.now())
             tempTable.put(generateId(user.userId, lecture.lectureId), register)
             return register
         }
 
-        override fun findById(user: UserEntity, lecture: LectureEntity): RegisterEntity? {
+        override fun findById(user: User, lecture: Lecture): Register? {
             return tempTable.get(generateId(user.userId, lecture.lectureId))
         }
 
-        override fun deleteById(user: UserEntity, lecture: LectureEntity) {
+        override fun deleteById(user: User, lecture: Lecture) {
             tempTable.remove(generateId(user.userId, lecture.lectureId))
         }
 
-        override fun findByLecture(lecture: LectureEntity): List<RegisterEntity> {
-            val result = mutableListOf<RegisterEntity>()
+        override fun findByLecture(lecture: Lecture): List<Register> {
+            val result = mutableListOf<Register>()
             tempTable.forEach { key, reg ->
                 if( key.split(keyDelim)[1].toLong() == lecture.lectureId ) result.add(reg)
             }
@@ -197,13 +199,13 @@ class RegisterServiceTest {
         }
     }
 
-    private class TestUserRepository: UserRepository{
-        private val tempTable = mutableMapOf<Long, UserEntity>()
-        override fun findById(userId: Long): UserEntity? {
+    private class TestUserRepository: UserRepository {
+        private val tempTable = mutableMapOf<Long, User>()
+        override fun findById(userId: Long): User? {
             return tempTable.get(userId)
         }
 
-        override fun save(user: UserEntity): UserEntity {
+        override fun save(user: User): User {
             tempTable.put(user.userId, user)
             return user
         }
@@ -213,13 +215,13 @@ class RegisterServiceTest {
         }
     }
 
-    private class TestLectureRepository: LectureRepository{
-        private val tempTable = mutableMapOf<Long, LectureEntity>()
-        override fun findById(lectureId: Long): LectureEntity? {
+    private class TestLectureRepository: LectureRepository {
+        private val tempTable = mutableMapOf<Long, Lecture>()
+        override fun findById(lectureId: Long): Lecture? {
             return tempTable.get(lectureId)
         }
 
-        override fun save(lecture: LectureEntity): LectureEntity {
+        override fun save(lecture: Lecture): Lecture {
             tempTable.put(lecture.lectureId, lecture)
             return lecture
         }

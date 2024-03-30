@@ -1,12 +1,13 @@
 package org.khjin.cleanarchitecture.register
 
 import org.khjin.cleanarchitecture.exception.*
-import org.khjin.cleanarchitecture.lecture.LectureRepository
+import org.khjin.cleanarchitecture.lecture.repository.LectureRepository
 import org.khjin.cleanarchitecture.register.dto.CheckRegistrationRequest
 import org.khjin.cleanarchitecture.register.dto.CheckRegistrationResponse
 import org.khjin.cleanarchitecture.register.dto.RegisterRequest
 import org.khjin.cleanarchitecture.register.dto.RegistrationStatus
-import org.khjin.cleanarchitecture.user.UserRepository
+import org.khjin.cleanarchitecture.register.repository.RegisterRepository
+import org.khjin.cleanarchitecture.user.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
