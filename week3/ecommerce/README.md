@@ -75,15 +75,26 @@
             repository/
             infrastructure/ => implementations of repository interfaces
 ```
-## 1-3. Domian 식별s
+## 1-3. Domian, Entity 식별
 ### 1-3-1. 사용자 - user
 * 로그인 및 회원 관리 기능은 최소한으로 할 것이기 때문에 생략 가능
 ### 1-3-2. 포인트 - point
 * 결제 시 사용하는 포인트
 * 충전/차감
 ### 1-3-3. 상품 - product
+* 상품id, 상품명, 카테고리, 가격
 ### 1-3-4. 재고 - inventory
-### 1-3-4. 장바구니 - cart
+* write 작업이 빈번할 것이기 때문에 상품과 별도로 관리
+### 1-3-5. 주문 - order
+* 주문id, 사용자id, 상품id, 주문개수, 주문일시, 총 주문 금액
+* 사용자의 주문내역 관리
+### 1-3-6. 장바구니 - cart
+* 장바구니id, 사용자id, 상품id, 장바구니 담은 개수
+* 장바구니 담기/ 장바구니에서 선택한 품목 제거, 장바구니 조회
+
+# 2. Sequence Diagrams
+## 2-1. 포인트 충전
+![포인트 충전.drawio.png](docs%2Fsequence_diagrams%2F%ED%8F%AC%EC%9D%B8%ED%8A%B8%20%EC%B6%A9%EC%A0%84.drawio.png)
 
 
 
