@@ -75,7 +75,7 @@
             repository/
             infrastructure/ => implementations of repository interfaces
 ```
-## 1-3. Domian, Entity 식별
+## 1-3. Domain, Entity 식별
 ### 1-3-1. 사용자 - user
 * 로그인 및 회원 관리 기능은 최소한으로 할 것이기 때문에 생략 가능
 ### 1-3-2. 포인트 - point
@@ -98,4 +98,5 @@
 ## 2-2. 상품 조회
 ![상품 조회.drawio.png](docs%2Fsequence_diagrams%2F%EC%83%81%ED%92%88%20%EC%A1%B0%ED%9A%8C.drawio.png)
 
-
+# 3. ERD
+![ERD.drawio.png](docs%2Fsequence_diagrams%2FERD.drawio.png)
