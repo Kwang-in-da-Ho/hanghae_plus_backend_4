@@ -97,6 +97,8 @@
 ![포인트 충전.drawio.png](docs%2Fsequence_diagrams%2F%ED%8F%AC%EC%9D%B8%ED%8A%B8%20%EC%B6%A9%EC%A0%84.drawio.png)
 ## 2-2. 상품 조회
 ![상품 조회.drawio.png](docs%2Fsequence_diagrams%2F%EC%83%81%ED%92%88%20%EC%A1%B0%ED%9A%8C.drawio.png)
+## 2-3. 주문
+![주문.drawio.png](docs%2Fsequence_diagrams%2F%EC%A3%BC%EB%AC%B8.drawio.png)
 
 # 3. ERD
 ![ERD.drawio.png](docs%2Fsequence_diagrams%2FERD.drawio.png)
