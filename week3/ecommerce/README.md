@@ -1,96 +1,4 @@
-# 0. Requirements
-### 기본과제
-
-1️⃣ `주요` **잔액 충전 / 조회 API**
-
-- 결제에 사용될 금액을 충전하는 API 를 작성합니다.
-- 사용자 식별자 및 충전할 금액을 받아 잔액을 충전합니다.
-- 사용자 식별자를 통해 해당 사용자의 잔액을 조회합니다.
-
-2️⃣ `기본` **상품 조회 API**
-
-- 상품 정보 ( ID, 이름, 가격, 잔여수량 ) 을 조회하는 API 를 작성합니다.
-- 조회시점의 상품별 잔여수량이 정확하면 좋습니다.
-
-3️⃣ `주요` **주문 / 결제 API**
-
-- 사용자 식별자와 (상품 ID, 수량) 목록을 입력받아 주문하고 결제를 수행하는 API 를 작성합니다.
-- 결제는 기 충전된 잔액을 기반으로 수행하며 성공할 시 잔액을 차감해야 합니다.
-- 데이터 분석을 위해 결제 성공 시에 실시간으로 주문 정보를 데이터 플랫폼에 전송해야 합니다. ( 데이터 플랫폼이 어플리케이션 `외부` 라는 가정만 지켜 작업해 주시면 됩니다 )
-
-> 데이터 플랫폼으로의 전송 기능은 Mock API, Fake Module 등 다양한 방법으로 접근해 봅니다.
-
-4️⃣ `기본` **상위 상품 조회 API**
-
-- 최근 3일간 가장 많이 팔린 상위 5개 상품 정보를 제공하는 API 를 작성합니다.
-- 통계 정보를 다루기 위한 기술적 고민을 충분히 해보도록 합니다.
-
----
-### 심화 과제
-
-5️⃣ `심화` **장바구니 기능**
-
-- 사용자는 구매 이전에 관심 있는 상품들을 장바구니에 적재할 수 있습니다.
-- 이 기능을 제공하기 위해 `장바구니에 상품 추가/삭제` API 와 `장바구니 조회` API 가 필요합니다.
-- 위 두 기능을 제공하기 위해 어떤 요구사항의 비즈니스 로직을 설계해야할 지 고민해 봅니다.
-
-> 💡 **KEY POINT**
-- 동시에 여러 주문이 들어올 경우, 유저의 보유 잔고에 대한 처리가 정확해야 합니다.
-- 각 상품의 재고 관리가 정상적으로 이루어져 잘못된 주문이 발생하지 않도록 해야 합니다.
-
----
-#  1.  들어가기 전
-## 1-1. API 고려해야 할 사항
-### 1-1-1. 잔액충전
-* 동시성 처리? 사용자가 악의적으로 동시에 여러 번 요청할 경우
-### 1-1-2. 상품조회
-* 조회 시점의 정보를 최대한 정확하도록 처리
-### 1-1-3. 주문
-* 주문 시점의 재고 확인
-* 재고에 대한 동시성 처리 - 한 번에 여러 요청이 들어왔을 때 재고가 정확히 처리되어야 한다
-    * DB - Pessimistic Lock 처리 필요할 듯
-* 데이터 플랫폼으로의 전송
-    * Mock API, Fake Module
-    * 이 API 호출이 실패하더라도 주문 및 결제 요청은 정상적으로 처리되어야 함
-### 1-1-4. 결제
-* 주문과 동시에 이뤄짐
-* 사용자의 잔액 확인
-  * 잔액 부족 시 에러 메시지 표시
-### 1-1-5. 장바구니 추가
-* 장바구니 넣는 시점에서의 재고 확인
-
-## 1-2. Architecture
-* Clean Architecture + Layered Architecture 채택 (허재 코치님)
-* 패키지 구조
-```
-    api/
-        [domain-name]/
-            controller/
-            dto/
-            usecase/
-    domian/
-        [domain-name]/
-            model/
-            components/
-            repository/
-            infrastructure/ => implementations of repository interfaces
-```
-## 1-3. Domain, Entity 식별
-### 1-3-1. 사용자 - user
-* 로그인 및 회원 관리 기능은 최소한으로 할 것이기 때문에 생략 가능
-### 1-3-2. 포인트 - point
-* 결제 시 사용하는 포인트
-* 충전/차감
-### 1-3-3. 상품 - product
-* 상품id, 상품명, 카테고리, 가격
-### 1-3-4. 재고 - inventory
-* write 작업이 빈번할 것이기 때문에 상품과 별도로 관리
-### 1-3-5. 주문 - order
-* 주문id, 사용자id, 상품id, 주문개수, 주문일시, 총 주문 금액
-* 사용자의 주문내역 관리
-### 1-3-6. 장바구니 - cart
-* 장바구니id, 사용자id, 상품id, 장바구니 담은 개수
-* 장바구니 담기/ 장바구니에서 선택한 품목 제거, 장바구니 조회
+목 제거, 장바구니 조회
 
 # 2. Sequence Diagrams
 ## 2-1. 포인트 충전
@@ -98,7 +6,134 @@
 ## 2-2. 상품 조회
 ![상품 조회.drawio.png](docs%2Fsequence_diagrams%2F%EC%83%81%ED%92%88%20%EC%A1%B0%ED%9A%8C.drawio.png)
 ## 2-3. 주문
-![주문.drawio.png](docs%2Fsequence_diagrams%2F%EC%A3%BC%EB%AC%B8.drawio.png)
+```mermaid
+sequenceDiagram
+    actor Customer
+    participant OrderController
+    participant OrderUseCase
+    participant ProductComponent
+    participant InventoryComponent
+    participant OrderComponent
+    participant PointComponent
+    participant PaymentComponent
+    participant OrderItemComponent
+    
+    Customer->>OrderController: POST /order
+    OrderController ->> OrderUseCase: order(request)
+    
+    loop request.orderItems
+        opt orderItem.quantity <= 0
+            OrderUseCase -->> OrderController: InvalidOrderQuantityException()
+            OrderController -->> Customer: 400 Bad Request
+        end
+        
+        OrderUseCase ->> ProductComponent: retrieveProduct(orderItem.productId)
+        ProductComponent ->> OrderUseCase: productInfo
+        
+        opt productInfo == null
+            OrderUseCase -->> OrderController: InvalidProductException()
+            OrderController -->> Customer: 400 Bad Request
+        end
+        
+        OrderUseCase ->> InventoryComponent: retrieveProductInventory(orderItem.productId)
+        InventoryComponent ->> OrderUseCase: InventoryInfo
+        
+        opt InventoryInfo.quantity < orderItem.quantity
+            OrderUseCase -->> OrderController: OutofStockException()
+            OrderController -->> Customer: 409 Conflict
+        end
+        
+        OrderUseCase ->> OrderUseCase: remainingInventory.quantity = InventoryInfo.quantiy - orderItem.quantity
+        OrderUseCase ->> InventoryComponent: updateInventory(remainingInventory)
+        InventoryComponent -->> OrderUseCase: updatedInventory
+        
+        OrderUseCase ->> OrderUseCase: totalPrice += (orderItem.quantity * productInfo.price)
+    end
+    
+    OrderUseCase ->> OrderComponent: insertOrder(customerId, totalPrice)
+    OrderComponent -->> OrderUseCase: orderInfo
+    
+    OrderUseCase ->> PointComponent : retrieveCustomerPoint(customerId)
+    PointComponent -->> OrderUseCase: customerPoint
+    
+    opt customerPoint < totalPrice
+        OrderUseCase -->> OrderController: InsufficientPointException()
+        OrderController -->> Customer: 409 Conflict
+    end
+    OrderUseCase ->> PaymentComponent: insertPayment()
+    PaymentComponent -->> OrderUseCase: paymentResult
+    
+    opt paymentResult != "SUCCESS"
+        OrderUseCase -->> OrderController: PaymentFailureException()
+        OrderController -->> Customer: 500 Internal Error
+    end
+    
+    OrderUseCase ->> OrderItemComponent: insertAllOrderItems()
+    OrderItemComponent -->> OrderUseCase: orderItemInsertResult
+    
+    loop retries <= 3
+        OrderUseCase ->> Data Platform: POST /order/statistics
+    end
+    
+    OrderUseCase -->> OrderController: orderResult
+    OrderController -->> Customer: 200 Success
+```
 
 # 3. ERD
-![ERD.drawio.png](docs%2Fsequence_diagrams%2FERD.drawio.png)
+```mermaid
+erDiagram
+  CUSTOMER {
+    long customer_id PK
+    string customer_name
+
+  }
+  POINT {
+    long customer_id PK, FK
+    long point
+  }
+  CUSTOMER ||--|o POINT : has
+
+  PRODUCT {
+    long product_id PK
+    string product_name
+    string category
+    long price
+  }
+  INVENTORY {
+    long product_id PK,FK
+    long quantity
+  }
+  PRODUCT ||--|o INVENTORY: has
+
+  ORDER {
+    long order_id PK
+    long customer_id FK
+    datetime order_datetime
+    string order_status
+    long total_price
+  }
+
+  ORDER_ITEM {
+    long order_item_id PK
+    long order_id FK
+    long product_id FK
+    long order_item_price
+  }
+  ORDER ||--o{ ORDER_ITEM: contains
+  CUSTOMER ||--o{ ORDER : places
+  PRODUCT ||--o{ ORDER_ITEM: composes
+
+  PAYMENT{
+    long payment_id PK
+    long customer_id FK
+    long order_id FK
+    string payment_method
+    long pay_amount
+    datetime pay_datetime
+    string pay_status
+  }
+  CUSTOMER ||--o{ PAYMENT : makes
+  PAYMENT ||--|| ORDER: fulfills
+```
+* 재고에 대한 I/O가 많으므로 `PRODUCT`테이블로부터 분리하여 `INVENTORY`테이블로 관리함
+* 주문 시 각 주문 상품에 대한 상태가 별도로 관리될 수 있으므로 `ORDER` 테이블과 `ORDER_ITEM` 테이블을 분리하여 관리
