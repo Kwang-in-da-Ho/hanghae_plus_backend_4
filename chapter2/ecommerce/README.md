@@ -92,6 +92,14 @@ erDiagram
     long point
   }
   CUSTOMER ||--|o POINT : has
+  
+  POINT_HISTORY {
+      long point_history_id PK
+      long customer_id FK
+      datetime last_updated
+  }
+  
+  POINT ||--|{ POINT_HISTORY : history
 
   PRODUCT {
     long product_id PK
