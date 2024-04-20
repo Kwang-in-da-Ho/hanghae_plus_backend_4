@@ -1,7 +1,7 @@
 package org.khjin.ecommerce.api.point.usecase
 
 import org.junit.jupiter.api.Test
-import org.khjin.ecommerce.api.point.dto.PointChargeRequest
+import org.khjin.ecommerce.api.point.dto.PointChargeInputDto
 import org.khjin.ecommerce.common.exception.InvalidPointException
 import org.khjin.ecommerce.domain.point.component.PointComponent
 import org.khjin.ecommerce.domain.point.model.Point
@@ -20,14 +20,14 @@ class PointChargeUseCaseTest{
 
     @Test
     fun `when points given to charge is not a positive number, throw InvalidPointException`() {
-        val negativeNumberRequest = PointChargeRequest(1L, -100)
+        val negativeNumberRequest = PointChargeInputDto(1L, -100)
         org.junit.jupiter.api.assertThrows<InvalidPointException> {
-            sut.chargePoint(negativeNumberRequest)
+            sut.run(negativeNumberRequest)
         }
 
-        val zeroPointRequest = PointChargeRequest(1L, 0)
+        val zeroPointRequest = PointChargeInputDto(1L, 0)
         org.junit.jupiter.api.assertThrows<InvalidPointException> {
-            sut.chargePoint(zeroPointRequest)
+            sut.run(zeroPointRequest)
         }
     }
 
@@ -53,8 +53,9 @@ class PointChargeUseCaseTest{
 
     private class PointHistoryStubRepository: PointHistoryRepository {
         private val db = mutableMapOf<Long, PointHistory>()
+        private var sequence = 0L
         override fun save(pointHistory: PointHistory) {
-            TODO("Not yet implemented")
+            db[++sequence] = pointHistory
         }
     }
 

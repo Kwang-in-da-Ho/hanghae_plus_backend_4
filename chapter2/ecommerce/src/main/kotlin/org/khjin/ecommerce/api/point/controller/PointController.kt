@@ -14,7 +14,7 @@ class PointController(
 
     @PostMapping("/charge")
     fun charge(@RequestBody pointChargeRequest: PointChargeRequest): PointChargeResponse{
-        return pointChargeUseCase.chargePoint(pointChargeRequest)
+        return pointChargeUseCase.run(pointChargeRequest.toInputDto()).toResponse()
     }
 
 }
