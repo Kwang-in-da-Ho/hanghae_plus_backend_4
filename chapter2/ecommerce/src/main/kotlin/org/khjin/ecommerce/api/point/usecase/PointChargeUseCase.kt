@@ -14,6 +14,6 @@ class PointChargeUseCase(
         if( request.point <= 0 ) throw InvalidPointException()
 
         val charged = pointComponent.charge(request.toEntity())
-        return PointChargeResponse(charged.userId, charged.point)
+        return PointChargeResponse(charged.customerId, charged.point)
     }
 }

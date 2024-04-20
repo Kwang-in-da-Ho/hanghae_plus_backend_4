@@ -5,13 +5,16 @@ import org.khjin.ecommerce.api.point.dto.PointChargeRequest
 import org.khjin.ecommerce.common.exception.InvalidPointException
 import org.khjin.ecommerce.domain.point.component.PointComponent
 import org.khjin.ecommerce.domain.point.model.Point
+import org.khjin.ecommerce.domain.point.model.PointHistory
+import org.khjin.ecommerce.domain.point.repository.PointHistoryRepository
 import org.khjin.ecommerce.domain.point.repository.PointRepository
 
 class PointChargeUseCaseTest{
 
     companion object{
         private val pointStubRepository = PointStubRepository()
-        private val pointComponent = PointComponent(pointStubRepository)
+        private val pointHistoryStubRepository = PointHistoryStubRepository()
+        private val pointComponent = PointComponent(pointStubRepository, pointHistoryStubRepository)
         private val sut = PointChargeUseCase(pointComponent)
     }
 
@@ -36,15 +39,22 @@ class PointChargeUseCaseTest{
         }
 
         override fun save(point: Point): Point {
-            if(db[point.userId] == null){
-                db[point.userId] = point
+            if(db[point.customerId] == null){
+                db[point.customerId] = point
             }else {
-                val old = db[point.userId]!!
-                val new = Point(point.userId, point.point + old.point)
-                db[point.userId] = new
+                val old = db[point.customerId]!!
+                val new = Point(point.customerId, point.point + old.point)
+                db[point.customerId] = new
             }
 
-            return db[point.userId]!!
+            return db[point.customerId]!!
+        }
+    }
+
+    private class PointHistoryStubRepository: PointHistoryRepository {
+        private val db = mutableMapOf<Long, PointHistory>()
+        override fun save(pointHistory: PointHistory) {
+            TODO("Not yet implemented")
         }
     }
 
