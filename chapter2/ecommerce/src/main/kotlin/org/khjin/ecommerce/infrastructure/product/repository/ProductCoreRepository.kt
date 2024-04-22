@@ -5,7 +5,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ProductCoreRepository: ProductRepository {
-    override fun save(product: Product): Product {
+    override fun save(productEntity: ProductEntity): ProductEntity {
+        TODO("Not yet implemented")
+    }
+
+    override fun findById(productId: Long): ProductEntity? {
         TODO("Not yet implemented")
     }
 }

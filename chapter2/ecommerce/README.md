@@ -197,13 +197,15 @@ erDiagram
   }
   POINT {
     long customer_id PK, FK
-    long point
+    long amount
   }
   CUSTOMER ||--|o POINT : has
   
   POINT_HISTORY {
       long point_history_id PK
       long customer_id FK
+      long amount
+      string point_status
       datetime last_updated
   }
   
@@ -215,9 +217,10 @@ erDiagram
     string category
     long price
   }
-  INVENTORY {
+  PRODUCT_INVENTORY {
     long product_id PK,FK
     long quantity
+    datetime last_updated
   }
   PRODUCT ||--|o INVENTORY: has
 

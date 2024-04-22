@@ -5,11 +5,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class PointCoreRepository: PointRepository {
-    override fun findByUserId(customerId: Long): Point? {
+    override fun findByCustomerId(customerId: Long): PointEntity? {
         TODO("Not yet implemented")
     }
 
-    override fun save(point: Point): Point {
+    override fun save(pointEntity: PointEntity): PointEntity {
         TODO("Not yet implemented")
     }
 }

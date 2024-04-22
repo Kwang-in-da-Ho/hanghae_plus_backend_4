@@ -1,0 +1,3 @@
+package org.khjin.ecommerce.domain.inventory.component
+
+class ProductInventoryComponentTest

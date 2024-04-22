@@ -5,7 +5,8 @@ import org.khjin.ecommerce.api.point.dto.PointChargeInputDto
 import org.khjin.ecommerce.domain.point.exception.InvalidPointException
 import org.khjin.ecommerce.domain.point.component.PointComponent
 import org.khjin.ecommerce.domain.point.model.Point
-import org.khjin.ecommerce.domain.point.model.PointHistory
+import org.khjin.ecommerce.infrastructure.point.repository.PointEntity
+import org.khjin.ecommerce.infrastructure.point.repository.PointHistoryEntity
 import org.khjin.ecommerce.infrastructure.point.repository.PointHistoryRepository
 import org.khjin.ecommerce.infrastructure.point.repository.PointRepository
 
@@ -33,29 +34,31 @@ class PointChargeUseCaseTest{
 
     // stub repo
     private class PointStubRepository: PointRepository {
-        private val db = mutableMapOf<Long, Point>()
-        override fun findByUserId(customerId: Long): Point? {
+        private val db = mutableMapOf<Long, PointEntity>()
+        override fun findByCustomerId(customerId: Long): PointEntity? {
             return db[customerId]
         }
 
-        override fun save(point: Point): Point {
-            if(db[point.customerId] == null){
-                db[point.customerId] = point
+        override fun save(pointEntity: PointEntity): PointEntity {
+            if(db[pointEntity.customerId] == null){
+                db[pointEntity.customerId] = pointEntity
             }else {
-                val old = db[point.customerId]!!
-                val new = Point(point.customerId, point.point + old.point)
-                db[point.customerId] = new
+                val old = db[pointEntity.customerId]!!
+                val new = PointEntity(pointEntity.customerId, pointEntity.amount + old.amount)
+                db[pointEntity.customerId] = new
             }
 
-            return db[point.customerId]!!
+            return db[pointEntity.customerId]!!
         }
     }
 
     private class PointHistoryStubRepository: PointHistoryRepository {
-        private val db = mutableMapOf<Long, PointHistory>()
+        private val db = mutableMapOf<Long, PointHistoryEntity>()
         private var sequence = 0L
-        override fun save(pointHistory: PointHistory) {
-            db[++sequence] = pointHistory
+
+        override fun save(pointHistoryEntity: PointHistoryEntity): PointHistoryEntity {
+            db[++sequence] = pointHistoryEntity
+            return pointHistoryEntity
         }
     }
 

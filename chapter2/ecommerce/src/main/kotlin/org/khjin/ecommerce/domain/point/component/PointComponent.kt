@@ -1,22 +1,20 @@
 package org.khjin.ecommerce.domain.point.component
 
 import org.khjin.ecommerce.domain.point.model.Point
-import org.khjin.ecommerce.domain.point.model.PointHistory
-import org.khjin.ecommerce.domain.point.model.PointStatus
-import org.khjin.ecommerce.infrastructure.point.repository.PointHistoryRepository
-import org.khjin.ecommerce.infrastructure.point.repository.PointRepository
+import org.khjin.ecommerce.infrastructure.point.repository.*
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class PointComponent(
     private val pointRepository: PointRepository,
     private val pointHistoryRepository: PointHistoryRepository,
 ) {
-    fun charge(point: Point): Point {
+    fun charge(pointEntity: Point): Point {
 
-        val result = pointRepository.save(Point(point.customerId, point.point))
-        pointHistoryRepository.save(PointHistory(
-            0L, point.customerId, point.point, PointStatus.CHARGE
+        val result = pointRepository.save(PointEntity(pointEntity.customerId, pointEntity.point)).toModel()
+        pointHistoryRepository.save(PointHistoryEntity(
+            null, pointEntity.customerId, pointEntity.point, PointStatus.CHARGE, LocalDateTime.now()
         ))
 
         return result

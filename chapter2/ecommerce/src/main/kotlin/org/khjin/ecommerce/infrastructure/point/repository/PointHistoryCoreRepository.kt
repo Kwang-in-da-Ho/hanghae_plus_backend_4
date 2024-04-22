@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class PointHistoryCoreRepository: PointHistoryRepository {
-    override fun save(pointHistory: PointHistory) {
+    override fun save(pointHistoryEntity: PointHistoryEntity): PointHistoryEntity {
         TODO("Not yet implemented")
     }
 }

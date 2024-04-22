@@ -1,15 +1,11 @@
 package org.khjin.ecommerce.domain.point.model
 
-class PointHistory(
-    val pointHistoryId: Long,
+import org.khjin.ecommerce.infrastructure.point.repository.PointStatus
+
+data class PointHistory(
+    val id: Long,
     val customerId: Long,
     val amount: Long,
     val pointStatus: PointStatus,
 ){
-
-}
-
-enum class PointStatus{
-    CHARGE,
-    USE
 }
