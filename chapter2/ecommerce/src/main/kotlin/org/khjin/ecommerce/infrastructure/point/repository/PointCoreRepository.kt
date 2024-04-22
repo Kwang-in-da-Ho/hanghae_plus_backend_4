@@ -1,12 +1,11 @@
-package org.khjin.ecommerce.domain.point.infrastructure
+package org.khjin.ecommerce.infrastructure.point.repository
 
 import org.khjin.ecommerce.domain.point.model.Point
-import org.khjin.ecommerce.domain.point.repository.PointRepository
 import org.springframework.stereotype.Repository
 
 @Repository
 class PointCoreRepository: PointRepository {
-    override fun findByUserId(userId: Long): Point? {
+    override fun findByUserId(customerId: Long): Point? {
         TODO("Not yet implemented")
     }
 

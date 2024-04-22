@@ -2,7 +2,7 @@ package org.khjin.ecommerce.api.point.usecase
 
 import org.khjin.ecommerce.api.point.dto.PointChargeInputDto
 import org.khjin.ecommerce.api.point.dto.PointChargeOutputDto
-import org.khjin.ecommerce.common.exception.InvalidPointException
+import org.khjin.ecommerce.domain.point.exception.InvalidPointException
 import org.khjin.ecommerce.domain.point.component.PointComponent
 import org.springframework.stereotype.Service
 

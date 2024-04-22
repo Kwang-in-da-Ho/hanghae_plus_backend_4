@@ -1,6 +1,6 @@
 package org.khjin.ecommerce.domain.product.component
 
-import org.khjin.ecommerce.domain.product.repository.ProductRepository
+import org.khjin.ecommerce.infrastructure.product.repository.ProductRepository
 import org.springframework.stereotype.Component
 
 @Component

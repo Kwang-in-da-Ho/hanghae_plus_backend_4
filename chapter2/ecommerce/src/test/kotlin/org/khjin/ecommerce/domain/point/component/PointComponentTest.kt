@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.khjin.ecommerce.domain.point.model.Point
 import org.khjin.ecommerce.domain.point.model.PointHistory
-import org.khjin.ecommerce.domain.point.repository.PointHistoryRepository
-import org.khjin.ecommerce.domain.point.repository.PointRepository
+import org.khjin.ecommerce.infrastructure.point.repository.PointHistoryRepository
+import org.khjin.ecommerce.infrastructure.point.repository.PointRepository
 
 class PointComponentTest {
 

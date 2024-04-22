@@ -1,7 +1,6 @@
-package org.khjin.ecommerce.domain.point.infrastructure
+package org.khjin.ecommerce.infrastructure.point.repository
 
 import org.khjin.ecommerce.domain.point.model.PointHistory
-import org.khjin.ecommerce.domain.point.repository.PointHistoryRepository
 import org.springframework.stereotype.Repository
 
 @Repository

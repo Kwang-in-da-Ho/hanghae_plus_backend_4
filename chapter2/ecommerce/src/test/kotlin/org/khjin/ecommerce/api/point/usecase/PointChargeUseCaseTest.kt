@@ -2,12 +2,12 @@ package org.khjin.ecommerce.api.point.usecase
 
 import org.junit.jupiter.api.Test
 import org.khjin.ecommerce.api.point.dto.PointChargeInputDto
-import org.khjin.ecommerce.common.exception.InvalidPointException
+import org.khjin.ecommerce.domain.point.exception.InvalidPointException
 import org.khjin.ecommerce.domain.point.component.PointComponent
 import org.khjin.ecommerce.domain.point.model.Point
 import org.khjin.ecommerce.domain.point.model.PointHistory
-import org.khjin.ecommerce.domain.point.repository.PointHistoryRepository
-import org.khjin.ecommerce.domain.point.repository.PointRepository
+import org.khjin.ecommerce.infrastructure.point.repository.PointHistoryRepository
+import org.khjin.ecommerce.infrastructure.point.repository.PointRepository
 
 class PointChargeUseCaseTest{
 
@@ -34,8 +34,8 @@ class PointChargeUseCaseTest{
     // stub repo
     private class PointStubRepository: PointRepository {
         private val db = mutableMapOf<Long, Point>()
-        override fun findByUserId(userId: Long): Point? {
-            return db[userId]
+        override fun findByUserId(customerId: Long): Point? {
+            return db[customerId]
         }
 
         override fun save(point: Point): Point {
